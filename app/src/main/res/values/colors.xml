@@ -2,7 +2,5 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="deep_cyan">#16404D</color>
-    <color name="amber_gold">#DDA853</color>
-
+    <color name="background">#FAD0C4</color>
 </resources>
