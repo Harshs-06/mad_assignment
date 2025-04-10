@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Unit Converter</string>
+    <string name="converting_msg">Converting your unit....</string>
+    <string name="subtitle">The Only Converter You will Ever Need</string>
+</resources>
