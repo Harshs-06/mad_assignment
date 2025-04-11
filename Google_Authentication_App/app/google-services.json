@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "808456521162",
+    "project_id": "authentication-98b48",
+    "storage_bucket": "authentication-98b48.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808456521162:android:ea9f1d9713b942c1a13b33",
+        "android_client_info": {
+          "package_name": "com.mathematics.google_authentication_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808456521162-ok83s6vm5n2gncbg310pmeilegdou1cn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mathematics.google_authentication_app",
+            "certificate_hash": "a26f94845867f227d224fc04a65fe18b71ea72f8"
+          }
+        },
+        {
+          "client_id": "808456521162-1g0u1g9h0bptjjuq45l552di7s4n6gn1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd2GF0RuPFwpIBn_94UAfZKy9r0qljsDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808456521162-1g0u1g9h0bptjjuq45l552di7s4n6gn1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
