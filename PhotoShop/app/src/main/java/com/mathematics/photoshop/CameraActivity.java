@@ -1,7 +1,7 @@
 // Package declaration
 package com.mathematics.photoshop;
 
-// Imports
+// Imports section for necessary libraries
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,32 +46,32 @@ import java.util.concurrent.Executors;
 public class CameraActivity extends AppCompatActivity {
 
     // Permission and intent request codes
-    private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
-    private static final int REQUEST_CODE_PICK_FOLDER = 101;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;  // Request code for camera permission
+    private static final int REQUEST_CODE_PICK_FOLDER = 101;  // Request code for folder selection
 
-    // UI elements
-    private PreviewView previewView;
-    private CardView showview;
-    private ImageView showimg, photoClick;
-    private MaterialButton recapture, done;
+    // UI elements for the camera view and actions
+    private PreviewView previewView;  // Preview view for showing camera input
+    private CardView showview;  // CardView for displaying captured image
+    private ImageView showimg, photoClick;  // ImageView to show captured image and click button for photo
+    private MaterialButton recapture, done;  // Buttons for recapturing or finishing the process
 
     // CameraX and threading components
-    private ImageCapture imageCapture;
-    private ProcessCameraProvider cameraProvider;
-    private ExecutorService cameraExecutor;
+    private ImageCapture imageCapture;  // ImageCapture instance for capturing photos
+    private ProcessCameraProvider cameraProvider;  // Camera provider to bind camera lifecycle
+    private ExecutorService cameraExecutor;  // Executor service for running camera tasks in background
 
     // For photo capture and saving
-    private File tempPhotoFile;
-    private Bitmap capturedBitmap;
-    private Uri pickedFolderUri;
+    private File tempPhotoFile;  // Temporary file to store the captured photo
+    private Bitmap capturedBitmap;  // Bitmap to hold captured image
+    private Uri pickedFolderUri;  // URI of the folder where the image will be saved
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_camera); // Set layout
+        EdgeToEdge.enable(this);  // Enables edge-to-edge layout for full-screen experience
+        setContentView(R.layout.activity_camera); // Sets the layout of the activity
 
-        // Initialize views
+        // Initialize the UI components
         previewView = findViewById(R.id.previewView);
         recapture = findViewById(R.id.recapture);
         done = findViewById(R.id.done);
@@ -79,157 +79,157 @@ public class CameraActivity extends AppCompatActivity {
         showview = findViewById(R.id.showview);
         showimg = findViewById(R.id.showimg);
 
-        // Disable action buttons initially
+        // Initially disable action buttons (recapture and done)
         recapture.setEnabled(false);
         done.setEnabled(false);
 
-        // Create background thread for camera operations
+        // Set up background thread to handle camera tasks
         cameraExecutor = Executors.newSingleThreadExecutor();
 
-        // Check camera permission
+        // Check if the app has camera permission
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);  // Request camera permission
         } else {
-            startCamera(); // Start camera if permission granted
+            startCamera();  // Start the camera if permission is already granted
         }
 
-        // Capture button action
+        // Set up photo click button action to capture the photo
         photoClick.setOnClickListener(v -> preparePhoto());
 
-        // Recapture action
+        // Set up recapture button action to allow retaking a photo
         recapture.setOnClickListener(v -> {
-            recapture.setEnabled(false);
-            done.setEnabled(false);
-            previewView.setVisibility(View.VISIBLE);
-            showview.setVisibility(View.GONE);
-            Toast.makeText(this, "You can retake the photo now", Toast.LENGTH_SHORT).show();
+            recapture.setEnabled(false);  // Disable recapture button after use
+            done.setEnabled(false);  // Disable done button until the photo is retaken
+            previewView.setVisibility(View.VISIBLE);  // Show the preview view again
+            showview.setVisibility(View.GONE);  // Hide the captured image view
+            Toast.makeText(this, "You can retake the photo now", Toast.LENGTH_SHORT).show();  // Inform the user
         });
 
-        // Done action: open folder picker
+        // Set up done button action to open the folder picker for saving the photo
         done.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            startActivityForResult(intent, REQUEST_CODE_PICK_FOLDER);
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);  // Intent to open folder picker
+            startActivityForResult(intent, REQUEST_CODE_PICK_FOLDER);  // Start folder picker activity
         });
 
-        // Handle full screen padding
+        // Handle full-screen padding adjustments for system UI (status bar, navigation bar)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());  // Get system bar insets
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);  // Apply padding
+            return insets;  // Return updated insets
         });
     }
 
-    // Handle permission result
+    // Handle the result of permission request
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startCamera(); // Restart camera after permission granted
+                startCamera();  // Restart camera after permission is granted
             } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();  // Inform the user if permission is denied
             }
         }
     }
 
-    // Start CameraX preview
+    // Start the camera using CameraX
     private void startCamera() {
-        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);  // Get CameraProvider instance
         cameraProviderFuture.addListener(() -> {
             try {
-                cameraProvider = cameraProviderFuture.get();
-                Preview preview = new Preview.Builder().build();
-                imageCapture = new ImageCapture.Builder().build();
-                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+                cameraProvider = cameraProviderFuture.get();  // Get the camera provider
+                Preview preview = new Preview.Builder().build();  // Create a Preview instance for camera input
+                imageCapture = new ImageCapture.Builder().build();  // Create an ImageCapture instance for taking photos
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;  // Select the back camera
 
-                cameraProvider.unbindAll(); // Clear previous bindings
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);
-                preview.setSurfaceProvider(previewView.getSurfaceProvider());
+                cameraProvider.unbindAll();  // Unbind previous camera use cases
+                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture);  // Bind camera to lifecycle
+                preview.setSurfaceProvider(previewView.getSurfaceProvider());  // Set the surface provider for the preview view
             } catch (Exception e) {
-                e.printStackTrace();
+                e.printStackTrace();  // Print exception if camera setup fails
             }
-        }, ContextCompat.getMainExecutor(this));
+        }, ContextCompat.getMainExecutor(this));  // Run on main executor (UI thread)
     }
 
-    // Capture image and show preview
+    // Prepare the photo by capturing it
     private void preparePhoto() {
         try {
-            // Temporary file to store captured photo
+            // Create a temporary file to store the photo
             tempPhotoFile = File.createTempFile("temp_photo", ".jpg", getCacheDir());
-            ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(tempPhotoFile).build();
+            ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(tempPhotoFile).build();  // Set options for saving the photo
 
-            // Capture photo
+            // Take the picture
             imageCapture.takePicture(outputOptions, cameraExecutor, new ImageCapture.OnImageSavedCallback() {
                 @Override
                 public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                     runOnUiThread(() -> {
-                        previewView.setVisibility(View.GONE);
-                        showview.setVisibility(View.VISIBLE);
-                        capturedBitmap = BitmapFactory.decodeFile(tempPhotoFile.getAbsolutePath());
-                        showimg.setImageBitmap(capturedBitmap);
-                        Toast.makeText(CameraActivity.this, "Preview ready. Click Done to save.", Toast.LENGTH_SHORT).show();
-                        recapture.setEnabled(true);
-                        done.setEnabled(true);
+                        previewView.setVisibility(View.GONE);  // Hide the preview view after photo is taken
+                        showview.setVisibility(View.VISIBLE);  // Show the captured image view
+                        capturedBitmap = BitmapFactory.decodeFile(tempPhotoFile.getAbsolutePath());  // Decode the captured photo file into a bitmap
+                        showimg.setImageBitmap(capturedBitmap);  // Set the captured bitmap into the ImageView
+                        Toast.makeText(CameraActivity.this, "Preview ready. Click Done to save.", Toast.LENGTH_SHORT).show();  // Inform the user
+                        recapture.setEnabled(true);  // Enable recapture button
+                        done.setEnabled(true);  // Enable done button
                     });
                 }
 
                 @Override
                 public void onError(@NonNull ImageCaptureException exception) {
-                    runOnUiThread(() -> Toast.makeText(CameraActivity.this, "Preview failed", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(CameraActivity.this, "Preview failed", Toast.LENGTH_SHORT).show());  // Show error message if capture fails
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // Print any exceptions during photo preparation
         }
     }
 
-    // Handle folder selection result
+    // Handle the folder selection result after the user picks a folder
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PICK_FOLDER && resultCode == RESULT_OK && data != null) {
-            pickedFolderUri = data.getData();
+            pickedFolderUri = data.getData();  // Get the selected folder URI
             if (pickedFolderUri != null && capturedBitmap != null) {
-                saveBitmapToFolder(pickedFolderUri, capturedBitmap);
+                saveBitmapToFolder(pickedFolderUri, capturedBitmap);  // Save the captured image to the selected folder
             }
         }
     }
 
-    // Save bitmap to selected folder using SAF
+    // Save the bitmap to the selected folder using the Storage Access Framework (SAF)
     private void saveBitmapToFolder(Uri folderUri, Bitmap bitmap) {
         try {
-            // Grant access permanently to the folder
+            // Grant write and read permissions to the selected folder URI
             getContentResolver().takePersistableUriPermission(folderUri,
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            // Create file and write bitmap
-            String name = "IMG_" + System.currentTimeMillis() + ".jpg";
-            DocumentFile pickedDir = DocumentFile.fromTreeUri(this, folderUri);
-            DocumentFile file = pickedDir.createFile("image/jpeg", name);
+            // Create a file in the selected folder and write the bitmap
+            String name = "IMG_" + System.currentTimeMillis() + ".jpg";  // Generate a unique file name
+            DocumentFile pickedDir = DocumentFile.fromTreeUri(this, folderUri);  // Get the folder as DocumentFile
+            DocumentFile file = pickedDir.createFile("image/jpeg", name);  // Create a new JPEG file in the folder
 
-            OutputStream out = getContentResolver().openOutputStream(file.getUri());
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.close();
+            OutputStream out = getContentResolver().openOutputStream(file.getUri());  // Open an output stream to the file
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);  // Compress the bitmap and write it to the file
+            out.close();  // Close the output stream
 
-            Toast.makeText(this, "Saved to selected folder", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Saved to selected folder", Toast.LENGTH_SHORT).show();  // Notify the user that the image was saved
 
-            // Reset UI after save
-            showimg.setImageBitmap(null);
-            showview.setVisibility(View.GONE);
-            previewView.setVisibility(View.VISIBLE);
-            recapture.setEnabled(false);
-            done.setEnabled(false);
-            tempPhotoFile.delete();
+            // Reset UI after saving the image
+            showimg.setImageBitmap(null);  // Clear the image preview
+            showview.setVisibility(View.GONE);  // Hide the image view
+            previewView.setVisibility(View.VISIBLE);  // Show the preview view again
+            recapture.setEnabled(false);  // Disable the recapture button
+            done.setEnabled(false);  // Disable the done button
+            tempPhotoFile.delete();  // Delete the temporary photo file
         } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Saving failed", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();  // Print exception if saving fails
+            Toast.makeText(this, "Saving failed", Toast.LENGTH_SHORT).show();  // Notify the user of the failure
         }
     }
 
-    // Shutdown executor on activity destroy
+    // Shutdown executor when the activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cameraExecutor.shutdown();
+        cameraExecutor.shutdown();  // Shutdown the camera executor to free resources
     }
 }
