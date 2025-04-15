@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PhotoShop</string>
+    <string name="selectfolder">Select Folder</string>
+    <string name="img_det"><u>Image Details</u></string>
+</resources>

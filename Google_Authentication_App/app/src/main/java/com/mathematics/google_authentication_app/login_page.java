@@ -37,7 +37,7 @@ public class login_page extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso); // fixed this line
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         MaterialButton g_login = findViewById(R.id.g_login);
         g_login.setOnClickListener(view -> {

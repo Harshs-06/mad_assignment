@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".CameraActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/baloo_paaji"
+        android:text="@string/app_name"
+        android:textColor="#f95738"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+        <FrameLayout
+            android:layout_width="308dp"
+            android:layout_height="576dp">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/black"
+            app:cardCornerRadius="10dp"
+            tools:layout_editor_absoluteX="103dp"
+            tools:layout_editor_absoluteY="76dp">
+
+            <androidx.camera.view.PreviewView
+                android:id="@+id/previewView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:layout_marginTop="4dp" />
+        </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/showview"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                app:cardBackgroundColor="@color/black"
+                app:cardCornerRadius="10dp"
+                tools:layout_editor_absoluteX="103dp"
+                tools:layout_editor_absoluteY="76dp">
+                <ImageView
+                    android:id="@+id/showimg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+
+            tools:layout_editor_absoluteX="103dp"
+            tools:layout_editor_absoluteY="671dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/recapture"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:enabled="false"
+
+                android:text="Recapture"
+                android:fontFamily="@font/baloo_paaji"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:backgroundTint="@color/button_ed_design"
+                app:cornerRadius="10dp" />
+
+            <ImageView
+                android:id="@+id/photo_click"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/photo_click_button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/done"
+                android:layout_width="105dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:enabled="false"
+                android:fontFamily="@font/baloo_paaji"
+                android:text="Done"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:backgroundTint="@color/button_ed_design"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
